@@ -223,15 +223,12 @@
                 } else {
                     let generatedText = data[0].generated_text;
                     
-                    // Limit text to at most twice the input length
-                    let inputWords = inputText.split(/\s+/).length; // Count words in input
-                    let maxWords = inputWords * 2; // Max words allowed in output
-    
-                    let words = generatedText.split(/\s+/);
-                    if (words.length > maxWords) {
-                        generatedText = words.slice(0, maxWords).join(" ") + "...";
+                    // Limit text to 30 words
+                    let words = generatedText.split(" ");
+                    if (words.length > 30) {
+                        generatedText = words.slice(0, 30).join(" ") + "...";
                     }
-    
+
                     outputElement.innerHTML = "📝 " + generatedText;
                 }
             } catch (error) {
