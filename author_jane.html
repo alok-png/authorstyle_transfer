@@ -191,49 +191,51 @@
 
     <script>
         async function generateText() {
-            const inputText = document.getElementById("prompt").value;
-            const selectedAuthor = document.getElementById("author").value;
-            const outputElement = document.getElementById("generatedText");
+        const inputText = document.getElementById("prompt").value.trim();
+        const selectedAuthor = document.getElementById("author").value;
+        const outputElement = document.getElementById("generatedText");
 
-            if (!inputText) {
-                outputElement.innerHTML = "⚠️ Please enter some text.";
-                return;
-            }
+        if (!inputText) {
+            outputElement.innerHTML = "⚠️ Please enter some text.";
+            return;
+        }
 
-            document.getElementById("outputBox").style.display = "block";
-            outputElement.innerHTML = "⏳ Generating text...";
+        document.getElementById("outputBox").style.display = "block";
+        outputElement.innerHTML = "⏳ Generating text...";
 
-            const API_URL = "https://api-inference.huggingface.co/models/alok1108/authorial_style_transfer_jane";
-            const API_KEY = "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";
+        const API_URL = "https://api-inference.huggingface.co/models/alok1108/authorial_style_transfer_jane";
+        const API_KEY = "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";
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${API_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ inputs: ` ${inputText}` })
-                });
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ inputs: inputText })
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (data.error) {
-                    outputElement.innerHTML = `⚠️ Error: ${data.error}`;
-                } else {
-                    let generatedText = data[0].generated_text;
-                    
-                    // Limit text to 30 words
-                    let words = generatedText.split(" ");
-                    if (words.length > 30) {
-                        generatedText = words.slice(0, 30).join(" ") + "...";
-                    }
+            if (data.error) {
+                outputElement.innerHTML = `⚠️ Error: ${data.error}`;
+            } else {
+                let generatedText = data[0].generated_text;
+                
+                // Limit text to at most twice the input length
+                let inputWords = inputText.split(/\s+/).length; // Count words in input
+                let maxWords = inputWords * 2; // Max words allowed in output
 
-                    outputElement.innerHTML = "📝 " + generatedText;
+                let words = generatedText.split(/\s+/);
+                if (words.length > maxWords) {
+                    generatedText = words.slice(0, maxWords).join(" ") + "...";
                 }
-            } catch (error) {
-                outputElement.innerHTML = "Model Loading, Try after 1 minute.";
+
+                outputElement.innerHTML = "📝 " + generatedText;
             }
+        } catch (error) {
+            outputElement.innerHTML = "⚠️ Model Loading, Try after 1 minute.";
         }
 
         document.getElementById("authorForm").addEventListener("submit", function(event) {
