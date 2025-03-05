@@ -220,16 +220,11 @@
                 if (data.error) {
                     outputElement.innerHTML = `⚠️ Error: ${data.error}`;
                 } else {
-                        let generatedText = data[0].generated_text;
-                    
-                        // Get the length of input text
-                        let maxLength = inputText.length * 2; // Max output length = twice the input length
-                    
-                        // Limit generated text to maxLength characters
-                        if (generatedText.length > maxLength) {
-                            generatedText = generatedText.substring(0, maxLength) + "...";
-                        }
-                
+                    let generatedText = data[0].generated_text;
+                    let maxLength = inputText.length * 2;
+                    if (generatedText.length > maxLength) {
+                        generatedText = generatedText.substring(0, maxLength) + "...";
+                    }
                     outputElement.innerHTML = "📝 " + generatedText;
                 }
             } catch (error) {
