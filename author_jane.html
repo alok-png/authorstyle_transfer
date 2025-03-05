@@ -191,8 +191,7 @@
 
     <script>
         async function generateText() {
-            const inputText = document.getElementById("prompt").value;
-            const selectedAuthor = document.getElementById("author").value;
+            const inputText = document.getElementById("prompt").value.trim();
             const outputElement = document.getElementById("generatedText");
 
             if (!inputText) {
@@ -213,7 +212,7 @@
                         "Authorization": `Bearer ${API_KEY}`,
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ inputs: ` ${inputText}` })
+                    body: JSON.stringify({ inputs: inputText })
                 });
 
                 const data = await response.json();
@@ -223,16 +222,20 @@
                 } else {
                     let generatedText = data[0].generated_text;
                     
-                    // Limit text to 30 words
-                    let words = generatedText.split(" ");
-                    if (words.length > 30) {
-                        generatedText = words.slice(0, 30).join(" ") + "...";
+                    // Get word count of input text
+                    let inputWordCount = inputText.split(/\s+/).length;
+                    let maxWords = inputWordCount * 2; // Max output words = twice the input words
+
+                    // Limit generated text to maxWords
+                    let words = generatedText.split(/\s+/);
+                    if (words.length > maxWords) {
+                        generatedText = words.slice(0, maxWords).join(" ") + "...";
                     }
 
                     outputElement.innerHTML = "📝 " + generatedText;
                 }
             } catch (error) {
-                outputElement.innerHTML = "Model Loading, Try after 1 minute.";
+                outputElement.innerHTML = `⚠️ Error: ${error.message}`;
             }
         }
 
