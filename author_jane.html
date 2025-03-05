@@ -191,51 +191,52 @@
 
     <script>
         async function generateText() {
-        const inputText = document.getElementById("prompt").value.trim();
-        const selectedAuthor = document.getElementById("author").value;
-        const outputElement = document.getElementById("generatedText");
+            const inputText = document.getElementById("prompt").value;
+            const selectedAuthor = document.getElementById("author").value;
+            const outputElement = document.getElementById("generatedText");
 
-        if (!inputText) {
-            outputElement.innerHTML = "⚠️ Please enter some text.";
-            return;
-        }
-
-        document.getElementById("outputBox").style.display = "block";
-        outputElement.innerHTML = "⏳ Generating text...";
-
-        const API_URL = "https://api-inference.huggingface.co/models/alok1108/authorial_style_transfer_jane";
-        const API_KEY = "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";
-
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ inputs: inputText })
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                outputElement.innerHTML = `⚠️ Error: ${data.error}`;
-            } else {
-                let generatedText = data[0].generated_text;
-                
-                // Limit text to at most twice the input length
-                let inputWords = inputText.split(/\s+/).length; // Count words in input
-                let maxWords = inputWords * 2; // Max words allowed in output
-
-                let words = generatedText.split(/\s+/);
-                if (words.length > maxWords) {
-                    generatedText = words.slice(0, maxWords).join(" ") + "...";
-                }
-
-                outputElement.innerHTML = "📝 " + generatedText;
+            if (!inputText) {
+                outputElement.innerHTML = "⚠️ Please enter some text.";
+                return;
             }
-        } catch (error) {
-            outputElement.innerHTML = "⚠️ Model Loading, Try after 1 minute.";
+
+            document.getElementById("outputBox").style.display = "block";
+            outputElement.innerHTML = "⏳ Generating text...";
+
+            const API_URL = "https://api-inference.huggingface.co/models/alok1108/authorial_style_transfer_jane";
+            const API_KEY = "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";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ inputs: ` ${inputText}` })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    outputElement.innerHTML = `⚠️ Error: ${data.error}`;
+                } else {
+                    let generatedText = data[0].generated_text;
+                    
+                    // Limit text to at most twice the input length
+                    let inputWords = inputText.split(/\s+/).length; // Count words in input
+                    let maxWords = inputWords * 2; // Max words allowed in output
+    
+                    let words = generatedText.split(/\s+/);
+                    if (words.length > maxWords) {
+                        generatedText = words.slice(0, maxWords).join(" ") + "...";
+                    }
+    
+                    outputElement.innerHTML = "📝 " + generatedText;
+                }
+            } catch (error) {
+                outputElement.innerHTML = "Model Loading, Try after 1 minute.";
+            }
         }
 
         document.getElementById("authorForm").addEventListener("submit", function(event) {
