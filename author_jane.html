@@ -221,16 +221,17 @@
                     outputElement.innerHTML = `⚠️ Error: ${data.error}`;
                 } else {
                     let generatedText = data[0].generated_text;
-                    
-                    // Get word count of input text
-                    let inputWordCount = inputText.split(/\s+/).length;
-                    let maxWords = inputWordCount * 2; // Max output words = twice the input words
-
-                    // Limit generated text to maxWords
-                    let words = generatedText.split(/\s+/);
-                    if (words.length > maxWords) {
-                        generatedText = words.slice(0, maxWords).join(" ") + "...";
+                
+                    // Get the length of input text
+                    let maxLength = inputText.length * 2; // Max output length = twice the input length
+                
+                    // Limit generated text to maxLength characters
+                    if (generatedText.length > maxLength) {
+                        generatedText = generatedText.substring(0, maxLength) + "...";
                     }
+                
+                    outputElement.innerHTML = "📝 " + generatedText;
+                }
 
                     outputElement.innerHTML = "📝 " + generatedText;
                 }
